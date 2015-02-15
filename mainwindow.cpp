@@ -1,20 +1,19 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->treeView->setModel(Algos->model());
 
-    mdl = new TreeItemModel();
-    ui->treeView->setModel(mdl);
+
 }
-
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete mdl;
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -24,11 +23,141 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_treeView_clicked(const QModelIndex &index)
 {
-    ui->actionRun->setEnabled(index.isValid());
+   ui->actionRun->setEnabled(index.isValid());
+   ui->actionRun->setIcon(QIcon::fromTheme("media-playback-start"));
+
+   if ( !index.isValid())
+       return;
+
+   TreeItem<QVariant>* ti = static_cast<TreeItem<QVariant>*>(index.internalPointer());
+   Algo::Algorythm *algo = 0;
+
+   ui->actionRun->setEnabled(ti->dataCount() == 2);
+   if ( ti->dataCount() == 2 )
+   {
+       algo = VPtr<Algo::Algorythm>::asPtr( ti->data(1));
+
+       if ( !algo)
+           return;
+
+       if ( algo->state() == Algo::AlgorythmStates::Running)
+       {
+           ui->actionRun->setIcon(QIcon::fromTheme("media-playback-stop"));
+       } else
+           {
+
+               ui->actionRun->setIcon(QIcon::fromTheme("media-playback-start"));
+           }
+
+   }
+
 }
 
 void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
 {
-    ui->actionRun->setEnabled(index.isValid());
-    ui->actionRun->trigger();
+
+    if ( !index.isValid())
+        return;
+
+    TreeItem<QVariant>* ti = static_cast<TreeItem<QVariant>*>(index.internalPointer());
+    Algo::Algorythm *alg = 0;
+    if ( ti->dataCount() == 2 )
+    {
+        alg = VPtr<Algo::Algorythm>::asPtr( ti->data(1));
+
+    }else if ( ti->dataCount() == 1 ){
+        alg = Algos->createAlgorythm(ti);
+
+        bool check = QObject::connect(alg,SIGNAL(stateChanged(Algo::AlgorythmStates::AlgorythmState)),this,SLOT(onStateChanged(Algo::AlgorythmStates::AlgorythmState)));
+
+        Q_ASSERT(check);
+
+        Q_UNUSED(check);
+
+    }
+    if ( alg ){
+        ui->actionRun->setEnabled(index.isValid());
+        int i = ui->tabWidget->indexOf(alg->widget());
+        if ( i > -1 )
+        {
+            ui->tabWidget->setCurrentWidget(alg->widget());
+            if ( alg->state() == Algo::AlgorythmStates::Running)
+            {
+                ui->actionRun->setIcon(QIcon::fromTheme("media-playback-stop"));
+            } else
+                {
+                    ui->actionRun->setIcon(QIcon::fromTheme("media-playback-start"));
+                }
+        } else{
+            ui->tabWidget->addTab(alg->widget(),ti->data(0).toString());
+             ui->actionRun->setIcon(QIcon::fromTheme("media-playback-start"));
+        }
+    }
+}
+
+
+
+void MainWindow::on_actionRun_triggered()
+{
+    QModelIndexList sells = ui->treeView->selectionModel()->selectedIndexes();
+    if ( !sells.isEmpty() )
+    {
+        QModelIndex ind = sells.first();
+        TreeItem<QVariant> *ti = static_cast<TreeItem<QVariant>*>(ind.internalPointer());
+        if ( ti->dataCount() == 2)
+        {
+            Algo::Algorythm* algo = VPtr<Algo::Algorythm>::asPtr( ti->data(1) );
+            if ( algo )
+            {
+                if ( algo->state() == Algo::AlgorythmStates::Running)
+                {
+                   // ui->actionRun->setIcon(QIcon::fromTheme("media-playback-start"));
+                    algo->stop();
+                } else
+                    {
+                       // ui->actionRun->setIcon(QIcon::fromTheme("media-playback-stop"));
+                        algo->start();
+
+
+                    }
+
+            }
+        }
+    }
+}
+
+void MainWindow::onStateChanged(Algo::AlgorythmStates::AlgorythmState state)
+{
+    Algo::Algorythm *algo = static_cast<Algo::Algorythm*>(QObject::sender());
+    if ( algo )
+    {
+
+        QModelIndexList sells = ui->treeView->selectionModel()->selectedIndexes();
+        if ( !sells.isEmpty() )
+        {
+
+            QModelIndex ind = sells.first();
+            TreeItem<QVariant> *ti = static_cast<TreeItem<QVariant>*>(ind.internalPointer());
+            if ( ti->dataCount() == 2)
+            {
+
+                Algo::Algorythm* algo_sel = VPtr<Algo::Algorythm>::asPtr( ti->data(1) );
+                if ( algo_sel && algo_sel ==algo )
+                {
+
+                    if ( algo->state() == Algo::AlgorythmStates::Running)
+                    {
+                        ui->actionRun->setIcon(QIcon::fromTheme("media-playback-stop"));
+
+                    } else
+                        {
+                            ui->actionRun->setIcon(QIcon::fromTheme("media-playback-start"));
+
+                        }
+
+                }
+            }
+        }
+
+    }
 }

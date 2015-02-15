@@ -4,38 +4,80 @@
 
 #include <QString>
 #include <QList>
+#include <QWidget>
 
 #include "csingleton.h"
-#include "tree.h"
+#include "treeitemmodel.h"
+#include "util.h"
+#include "factorybuilder.h"
 
-namespace Algo{
+namespace  Algo{
 
-class Algorythm
+namespace AlgorythmStates{
+enum AlgorythmState{
+    Stopped, Running
+};
+}
+using namespace  AlgorythmStates;
+class Algorythm : public QObject
 {
-     QString name;
+ Q_OBJECT
+protected:
+    AlgorythmState m_state;
+    QWidget *wg;
+
+    void setState(AlgorythmStates::AlgorythmState state);
+
+
 public:
-    Algorythm();
-    ~Algorythm();
+    explicit Algorythm(QObject *parent= 0);
+    virtual ~Algorythm();
 
-    const QString & operator=(const Algo::Algorythm &other);
+    QWidget * widget(){
+        return wg;
+    }
+    AlgorythmState state() const{
+        return m_state;
+    }
+
+    bool isStopped() const;
+    bool isRunning() const;
+
+public slots:
+    virtual void start() = 0;
+    virtual void stop() = 0;
+signals:
+    void stateChanged(Algo::AlgorythmStates::AlgorythmState state);
 };
 
+class AlgorythmFactory :public CSingleton<AlgorythmFactory>, public FactoryBuilder<Algorythm,std::string>{
 
-class AlgorythmFactory:public CSingleton<AlgorythmFactory>{
+    friend class CSingleton<AlgorythmFactory>;
+    Tree<QVariant> *tree;
+    TreeItemModel *mdl;
 
-  QList<Algo::Algorythm*> algos;
+private:
 
+    AlgorythmFactory();
+    virtual ~AlgorythmFactory();
 
-  void reg( Algo::Algorythm &other){
-
-      algos.append(&other);
-  }
-
-
+public:
+    Algorythm * createAlgorythm(TreeItem<QVariant> *orig_ti);
+    void load();
+    TreeItemModel * model();
 };
-
-#define Algos AlgorythmFactory::instance()
-
 }
 
+#define Algos Algo::AlgorythmFactory::instance()
+
 #endif // ALGORYTHM_H
+
+/*
+       tree->setCurrentItemToBeginning();
+
+       while ( tree->current() && tree->current() != tree->root() ){
+         if ( tree->current()->dataCount() == 2 && VPtr<Algo::Algorythm>::asPtr(tree->current()->data(1)) )
+             return;
+         tree->next();
+       }
+ */

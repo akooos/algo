@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QAbstractItemModel>
 
-#include "algorythm.h"
 #include "tree.h"
 
 typedef TreeItem<QVariant>* PTIQVar;
@@ -14,7 +13,7 @@ class TreeItemModel : public QAbstractItemModel
 {
     Q_OBJECT
 
-    Tree<QVariant>      *tree;
+    Tree<QVariant>      *m_tree;
     PTIQVar             rootItem;
 
 public:
@@ -25,12 +24,10 @@ public:
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation,
                              int role = Qt::DisplayRole) const;
-    explicit TreeItemModel( QObject *parent = 0);
+
+    explicit TreeItemModel(Tree<QVariant> *tree ,QObject *parent = 0);
     ~TreeItemModel();
 
-signals:
-
-public slots:
 };
 
 #endif // TREEITEMMODEL_H

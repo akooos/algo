@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "treeitemmodel.h"
+#include "algorythm.h"
+#include "util.h"
 namespace Ui {
 class MainWindow;
 }
@@ -22,9 +24,14 @@ private slots:
 
     void on_treeView_doubleClicked(const QModelIndex &index);
 
+    void on_actionRun_triggered();
+
+    void onStateChanged(Algo::AlgorythmStates::AlgorythmState state);
+
 private:
     Ui::MainWindow *ui;
-    TreeItemModel *mdl;
+
+
 };
 
 #endif // MAINWINDOW_H

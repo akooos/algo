@@ -17,7 +17,9 @@
    <string>Algo</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="applications-development"/>
+   <iconset theme="applications-development">
+    <normaloff/>
+   </iconset>
   </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -68,7 +70,9 @@
     <enum>Qt::NoContextMenu</enum>
    </property>
    <property name="windowIcon">
-    <iconset theme="emblem-favorite"/>
+    <iconset theme="emblem-favorite">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
@@ -100,7 +104,20 @@
       <number>6</number>
      </property>
      <item>
-      <widget class="QTreeView" name="treeView"/>
+      <widget class="QTreeView" name="treeView">
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="autoExpandDelay">
+        <number>50</number>
+       </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
+       <property name="headerHidden">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -110,7 +127,9 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="media-playback-start"/>
+    <iconset theme="media-playback-start">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Futtatás</string>
@@ -121,7 +140,9 @@
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset theme="application-exit"/>
+    <iconset theme="application-exit">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Kilépés</string>

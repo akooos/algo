@@ -6,50 +6,35 @@
 template < class T >
 class TreeItem
 {
-
     private:
 
         QList< TreeItem<T>  *> childItems;
         QList< T >  childdatas;
         TreeItem <T>*parentItem;
-
-
-
     public:
-        TreeItem(TreeItem<T> *parent ):parentItem(parent)
-        {
-
-        }
-
+        TreeItem(TreeItem<T> *parent ):parentItem(parent){}
         virtual   ~TreeItem()
         {
             clearChildren ();
         }
-
-
         void add(T _data)
         {
             childdatas.append (_data);
         }
-
         void insert(int row, T _data)
         {
             childdatas.insert (row,_data);
         }
-
         void addChild(  TreeItem<T>  *child)
         {
             child->setParentItem (this);
             childItems.append (child);
         }
-
         void insertChild(int row, TreeItem<T>  *child  )
         {
             child->setParentItem (this);
             childItems.insert (row,child);
-
         }
-
         T removeAt(int index)
         {
             T t = data(index);
@@ -58,10 +43,12 @@ class TreeItem
 
             return t;
         }
-
-        void appendChild()
+        TreeItem<T>* appendChild()
         {
-            addChild (new TreeItem<T>(this));
+            TreeItem<T>* ret = new TreeItem<T>(this);
+            addChild (ret);
+
+            return ret;
         }
 
         void removeChild(int index)
@@ -73,12 +60,8 @@ class TreeItem
             childItems.removeAt (index);
         }
 
-        TreeItem<T>  *  child(int row) const
+        TreeItem<T>  *  child(unsigned int row) const
         {
-
-            if ( row < 0 || row >= childItems.count() )
-                return NULL;
-
             return childItems.at (row);
         }
 
