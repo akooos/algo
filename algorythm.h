@@ -2,14 +2,15 @@
 #define ALGORYTHM_H
 
 
-#include <QString>
-#include <QList>
-#include <QWidget>
+
 
 #include "csingleton.h"
 #include "treeitemmodel.h"
-#include "util.h"
+
 #include "factorybuilder.h"
+
+class TreeItemModel;
+class QWidget;
 
 namespace  Algo{
 
@@ -63,21 +64,13 @@ private:
 
 public:
     Algorythm * createAlgorythm(TreeItem<QVariant> *orig_ti);
+    bool deleteAlgorythm(TreeItem<QVariant> *orig_ti);
     void load();
     TreeItemModel * model();
+
 };
 }
 
 #define Algos Algo::AlgorythmFactory::instance()
 
 #endif // ALGORYTHM_H
-
-/*
-       tree->setCurrentItemToBeginning();
-
-       while ( tree->current() && tree->current() != tree->root() ){
-         if ( tree->current()->dataCount() == 2 && VPtr<Algo::Algorythm>::asPtr(tree->current()->data(1)) )
-             return;
-         tree->next();
-       }
- */

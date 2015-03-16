@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>application-exit.png</file>
+        <file>emblem-development.png</file>
+        <file>media-playback-start.png</file>
+        <file>media-playback-stop.png</file>
+        <file>delete.png</file>
+        <file>node-add.png</file>
+        <file>node-delete.png</file>
+        <file>pointer.png</file>
+        <file>edge-remove.png</file>
+        <file>edge-add.png</file>
+        <file>board.png</file>
+    </qresource>
+</RCC>

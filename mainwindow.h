@@ -28,6 +28,7 @@ private slots:
 
     void onStateChanged(Algo::AlgorythmStates::AlgorythmState state);
 
+    void onTabCloseRequested(int index);
 private:
     Ui::MainWindow *ui;
 

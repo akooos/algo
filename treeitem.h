@@ -3,6 +3,7 @@
 
 #include <QList>
 
+
 template < class T >
 class TreeItem
 {

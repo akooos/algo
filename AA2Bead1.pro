@@ -4,11 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = AA2Bead1
+TARGET = Algo
 TEMPLATE = app
 
 
@@ -17,7 +17,15 @@ SOURCES += main.cpp\
     treeitemmodel.cpp \
     algorythm.cpp \
     algorythms/bucket_sorts/bucketsort.cpp \
-    flowlayout.cpp
+    flowlayout.cpp \
+    algorythms/bucket_sorts/bucketgraphicsitem.cpp \
+    algorythms/hashing/hashing.cpp \
+    algorythms/bfs/bfs.cpp \
+    graphicsview_edge.cpp \
+    graphicsview_node.cpp \
+    algorythms/dijktsra/dijkstra.cpp \
+    graphscene.cpp \
+    algorythms/graphalgorythm.cpp
 
 HEADERS  += mainwindow.h \
     csingleton.h \
@@ -29,9 +37,31 @@ HEADERS  += mainwindow.h \
     algorythms/bucket_sorts/bucketsort.h \
     factoryitem.h \
     factorybuilder.h \
-    flowlayout.h
+    flowlayout.h \
+    algorythms/bucket_sorts/bucketgraphicsitem.h \
+    algorythms/hashing/hashing.h \
+    algorythms/bfs/bfs.h \
+    graph.h \
+    graphicsview_edge.h \
+    graphicsview_node.h \
+    defs.h \
+    algorythms/bfs/graphscene.h \
+    algorythms/dijktsra/dijkstra.h \
+    graphscene.h \
+    algorythms/graphalgorythm.h
 
 FORMS    += mainwindow.ui \
-    algorythms/bucket_sorts/bucketsort.ui
-QMAKE_CXXFLAGS += -save-temps
+    algorythms/bucket_sorts/bucketsort.ui \
+    algorythms/hashing/hashing.ui \
+    graph.ui
+#debug: QMAKE_CXXFLAGS += -save-temps
 release: QMAKE_CXXFLAGS_RELEASE += -O3
+
+windows:{
+OTHER_FILES += \
+    myapp.rc
+RC_FILE = myapp.rc
+}
+
+RESOURCES += \
+    icons/icons.qrc

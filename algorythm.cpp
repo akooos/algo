@@ -1,5 +1,6 @@
 #include "algorythm.h"
-
+#include "util.h"
+#include <QWidget>
 
 using namespace Algo;
 
@@ -39,12 +40,30 @@ AlgorythmFactory::~AlgorythmFactory(){
     delete mdl;
     delete tree;
 }
+bool AlgorythmFactory::deleteAlgorythm(TreeItem<QVariant> *orig_ti)
+{
+
+    if ( orig_ti->dataCount() == 2 ){
+        QVariant vr = orig_ti->data(1);
+        Algo::Algorythm *algo = VPtr<Algorythm>::asPtr(vr);
+        if ( algo ){
+            if ( algo->state() == AlgorythmStates::Running )
+                return false;
+            algo->deleteLater();
+        }
+        orig_ti->removeAt(1);
+
+        return true;
+    }
+
+    return false;
+}
 
 Algorythm *AlgorythmFactory::createAlgorythm(TreeItem<QVariant> *orig_ti)
 {
 
-    TreeItem<QVariant> *ti = orig_ti;
-   QString id;
+  TreeItem<QVariant> *ti = orig_ti;
+  QString id;
   do{
       id = id.isEmpty() ? ti->data(0).toString() : ti->data(0).toString()+"/"+id;
       ti = ti->parent();
@@ -73,21 +92,24 @@ void AlgorythmFactory::load(){
             continue;
         }
         //insert into model's tree
-        TreeItem<QVariant> * ti = tree;
+        TreeItem<QVariant> * ti = tree->root();
         foreach(const QString &str , ls){
+
             int i = 0;
-            for( ; i < ti->childCount();++i ){
+            const int ti_count = ti->childCount();
+            for( ; i < ti_count;++i ){
                 if ( ti->child(i)->data(0).toString() == str )
                 {
                     ti = ti->child(i);
-                    continue;
+                    break;
                 }
             }
-            if ( i >= ti->childCount()){
+            if ( i >= ti_count ){
+
                 ti = ti->appendChild();
                 ti->add(str);
-            }
 
+            }
         }
     }
 

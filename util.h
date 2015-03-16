@@ -1,10 +1,15 @@
 #ifndef UTIL
 #define UTIL
 
-#include <QDebug>
-#include "csingleton.h"
+
+
 #include <QEventLoop>
+#include <QDesktopWidget>
+#include <QApplication>
 #include <QAbstractAnimation>
+
+#include "defs.h"
+#include "csingleton.h"
 class Util: public CSingleton<Util>
 {
     friend class CSingleton<Util>;
@@ -13,7 +18,10 @@ class Util: public CSingleton<Util>
    }
 
 public:
-   bool startAndWaitForAnimation(QAbstractAnimation *anim){
+  void startAndWaitForAnimation(QAbstractAnimation *anim){
+
+     if ( !anim )
+         return;
 
      QEventLoop event_loop;
 
@@ -28,6 +36,28 @@ public:
      anim->start(QAbstractAnimation::DeleteWhenStopped);
 
      event_loop.exec();
+
+
+   }
+
+   void moveToCenter(QWidget *widget)
+   {
+
+           QSize size = widget->size();
+           QDesktopWidget *d = QApplication::desktop();
+           int snr = d->screenNumber(widget);
+
+           QRect sgeom = d->screenGeometry(snr);
+
+           int w = sgeom.width();   // returns screen width
+           int h = sgeom.height();  // returns screen height
+           int mw = size.width();
+           int mh = size.height();
+           int cw = (w/2) - (mw/2);
+           int ch = (h/2) - (mh/2);
+
+           widget->move(cw,ch);
+
    }
 };
 
