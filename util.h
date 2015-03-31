@@ -39,6 +39,22 @@ public:
 
 
    }
+   std::string numberToASCIINumber(size_t nr){
+
+       size_t m = nr % 26;
+       std::string res ;
+       res = res + ((char)(65+m));
+
+       nr = nr / 26;
+
+       while ( nr != 0 ){
+           m = nr % 26;
+           res =  (char)(65+m-1) + res;
+           nr = nr / 26;
+       }
+
+       return res;
+   }
 
    void moveToCenter(QWidget *widget)
    {

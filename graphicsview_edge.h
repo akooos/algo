@@ -14,34 +14,61 @@ class GraphicsView_Node;
 
 class GraphicsView_Edge : public QGraphicsObject
 {
-    Q_OBJECT
+    struct Label : public QGraphicsTextItem{
+        explicit Label(GraphicsView_Edge * parent);
+        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    };
 
+    struct ArrowHead: public QGraphicsPolygonItem{        
+        explicit ArrowHead(GraphicsView_Edge * parent);
+        void adjust(GraphicsView_Edge * parent);
+        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+
+
+        static const int    ArrowSize;
+
+    };
+
+    struct HandlePoint: public QGraphicsEllipseItem{
+
+            bool  calc;
+            float taux;
+            float tauy;
+            //float tau;
+            explicit HandlePoint(GraphicsView_Edge * parent);
+            virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+            virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+        private:
+            const float  CurvePointCircleRadius = 10;
+    };
+
+    Q_OBJECT
     //Q_PROPERTY ( QSizeF size READ size WRITE setSize )
     Q_PROPERTY ( QColor color READ color WRITE setColor )
-
-    constant int adjust_size = 10;
-
   //  QSizeF    p_size;
 
-    QGraphicsEllipseItem *gei;
-    QGraphicsEllipseItem *gei2;
+    HandlePoint *hp;
+    ArrowHead   *ah;
 
     GraphicsView_Node  *srcNode;
     GraphicsView_Node  *dstNode;
     QPointF srcPoint;
     QPointF dstPoint;
-    qreal arrowSize ;
+
     QColor p_clr;
     QPainterPath pp;
+    Label *lb;
+
 protected:
   virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
 public:
 
-    void adjust();
-    GraphicsView_Edge(GraphicsView_Node  *srcNode, GraphicsView_Node  *dstNode, QGraphicsItem * parent = 0);
+    void adjust(bool adjustHandlePoints = true);
+    GraphicsView_Edge(GraphicsView_Node  *srcNode, GraphicsView_Node  *dstNode,bool drawArrow ,QGraphicsItem * parent = 0);
     virtual ~GraphicsView_Edge();
 
     enum { Type = UserType + 561 };
@@ -67,6 +94,11 @@ public:
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &label) Q_DECL_OVERRIDE;
 
     virtual QPainterPath shape() const;
+
+
+    void setText(const QString &txt){
+        lb->setHtml(txt);
+    }
 
 
 };

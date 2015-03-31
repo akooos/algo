@@ -82,7 +82,7 @@ class Tree : public TreeItem<T>
 
                 } else
                 {
-                    currentItem = after(currentItem);
+                    currentItem = this->after(currentItem);
 
                     return currentItem;
                 }

@@ -1,6 +1,8 @@
 #include "hashing.h"
 
 #include "ui_hashing.h"
+
+#include <QDebug>
 RegisterFactoryItem(Hashing,AlgorythmFactory,"Hash functions")
 void Hashing::hashIn1(const QString &nid )
 {

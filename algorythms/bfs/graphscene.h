@@ -2,18 +2,13 @@
 #define GRAPHSCENE_H
 
 #include <QGraphicsScene>
-#include <QInputDialog>
-#include <QWidget>
-#include "graph.h"
-
-class QGraphicsLineItem;
 class QGraphicsSceneMouseEvent;
 class QKeyEvent;
 
 class GraphicsView_Node;
 class GraphicsView_Edge;
 
-
+#include "graph.h"
 using namespace AdjacencyList;
 struct IModelCtrl{
     virtual bool insertNode(QString &label, GraphicsView_Node* node) = 0;
@@ -22,11 +17,9 @@ struct IModelCtrl{
     virtual bool deleteEdge(const QString &srcLabel,const QString &dstLabel) = 0;
 
     virtual void setNodeWeight(Graph<QString,QVariant>::Node *n , QString key, QVariant value) = 0;
-    virtual bool setEdgeWeight(Graph<QString,QVariant>::Edge *e, QString key, QVariant value) = 0;
-    virtual bool setEdgeWeight(Graph<QString,QVariant>::Node *src,Graph<QString,QVariant>::Node *dest, QString key, QVariant value) = 0;
-    virtual bool setEdgeWeight(const QString &srcLabel,const QString &dstLabel, QString key, QVariant value) = 0;
-
-    virtual bool isDirected() const = 0;
+    virtual void setEdgeWeight(Graph<QString,QVariant>::Node *src,Graph<QString,QVariant>::Node *dest, QString key, QVariant value) = 0;
+  /*  virtual QColor edgeColor(const QString &srcLabel,const QString &dstLabel) = 0;
+    virtual QColor nodeColor(const QString &label) = 0;*/
 
 };
 
@@ -46,10 +39,6 @@ public:
         return mintf;
     }
 
-
-
-    void userQueryWeight(GraphicsView_Edge *edge);
-
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) Q_DECL_OVERRIDE;
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) Q_DECL_OVERRIDE;
@@ -59,17 +48,12 @@ protected:
 private:
     GraphMode  mode;
     IModelCtrl *mintf;
-
-
-
-    QGraphicsLineItem *gli;
-
+    bool drawArrow;
 
     //összekötendő
 
     GraphicsView_Node * srcNode;
     GraphicsView_Node * dstNode;
-
 
 };
 

@@ -101,7 +101,7 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
                 ui->actionRun->setIcon(QIcon::fromTheme("media-playback-start",QIcon(":/media-playback-start")));
                 ui->actionRun->setText(QObject::tr("Futtatás"));
             }
-        } else{
+        } else{            
             ui->tabWidget->addTab(alg->widget(),ti->data(0).toString());
             ui->actionRun->setIcon(QIcon::fromTheme("media-playback-start",QIcon(":/media-playback-start")));
             ui->actionRun->setText(QObject::tr("Futtatás"));
@@ -183,8 +183,8 @@ void MainWindow::onStateChanged(Algo::AlgorythmStates::AlgorythmState state)
 void MainWindow::onTabCloseRequested(int index)
 {
 
-
-  Q_UNUSED(index)
+    Algos->deleteAlgorythm(ui->tabWidget->widget(index));
+ /* Q_UNUSED(index)
 
   QModelIndexList sells = ui->treeView->selectionModel()->selectedIndexes();
   if ( !sells.isEmpty() )
@@ -192,6 +192,6 @@ void MainWindow::onTabCloseRequested(int index)
       QModelIndex ind = sells.first();
       TreeItem<QVariant> *ti = static_cast<TreeItem<QVariant>*>(ind.internalPointer());
       Algos->deleteAlgorythm(ti);
-  }
+  }*/
 
 }

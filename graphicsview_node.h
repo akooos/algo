@@ -65,10 +65,12 @@ public:
     void setPen(const QPen &label);
     const QPen &pen() const;
 
+    void setColor(QColor clr);
+
 private:
-    constant int adjust_size = 5;
-    constant int ti_padding  = 5;
-    constant qreal rect_round_radius = 3;
+    const int adjust_size = 5;
+    const int ti_padding  = 5;
+    const qreal rect_round_radius = 3;
 
     QSizeF    p_size;
     QVariant  p_value;

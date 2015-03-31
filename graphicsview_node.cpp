@@ -13,7 +13,7 @@ GraphicsView_Node::GraphicsView_Node(QGraphicsItem * parent):QGraphicsObject(par
 
   setCacheMode(DeviceCoordinateCache);
   setZValue(1);
-  setSize( QSizeF(40,40) );
+  setSize( QSizeF(30,30) );
   setNodeShape(Rectangle);
 
 }
@@ -65,12 +65,14 @@ void GraphicsView_Node::paint(QPainter *painter, const QStyleOptionGraphicsItem 
         pen.setWidth(1);
         pen.setStyle(Qt::DotLine);
         painter->setPen(pen);
-
         painter->drawRect(boundingRect());
-    }
+        QPen p = p_pen;
+        p.setWidth(3);
+        painter->setPen(p);
+    }else
+        painter->setPen(p_pen);
 
     painter->setBrush(p_brush);
-    painter->setPen(p_pen);
     painter->drawPath(pp);
     painter->restore();
 }
@@ -98,6 +100,7 @@ QVariant GraphicsView_Node::itemChange(QGraphicsItem::GraphicsItemChange change,
 void GraphicsView_Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsObject::mouseMoveEvent(event);
+/*
 
     if (x() < 0)
       {
@@ -105,7 +108,7 @@ void GraphicsView_Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
       }
       else if (x() + boundingRect().right() > scene()->width())
       {
-          setPos(scene()->width() - boundingRect().width(), y());
+          //setPos(scene()->width() - boundingRect().width(), y());
       }
 
       if (y() < 0)
@@ -114,9 +117,9 @@ void GraphicsView_Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
       }
       else if ( y()+ boundingRect().bottom() > scene()->height())
       {
-          setPos(x(), scene()->height() - boundingRect().height());
+         // setPos(x(), scene()->height() - boundingRect().height());
       }
-
+*/
     update();
 
 }
@@ -146,7 +149,7 @@ void GraphicsView_Node::setSize(const QSizeF &value)
         prepareGeometryChange();
         p_size = value;
         QFont f = ti->font();
-        f.setPixelSize(p_size.height() * 0.45);
+        f.setPixelSize(p_size.height() * 0.5);
         ti->setFont(f);
         ti->setTextWidth(p_size.width()-ti_padding);
         posCenterText();
@@ -161,6 +164,10 @@ void GraphicsView_Node::setValue(const QVariant &value)
     if ( value != ti->toPlainText() ){
         prepareGeometryChange();
         ti->setHtml("<center>"+value.toString()+"</center>");
+        if ( ti->boundingRect().size().height() > this->boundingRect().size().height() || ti->boundingRect().size().width() > this->boundingRect().size().width()){
+            QSizeF nsize = p_size *1.5;
+            setSize(nsize);
+        }
         posCenterText();
     }
 }
@@ -243,5 +250,12 @@ void GraphicsView_Node::setPen(const QPen &value)
 const QPen &GraphicsView_Node::pen() const
 {
     return p_pen;
+}
+
+void GraphicsView_Node::setColor(QColor clr)
+{
+    //clr.setAlpha(180);
+    setBrush(clr);
+    setPen(clr.darker());
 }
 

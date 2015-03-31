@@ -7,7 +7,8 @@
 
 
 RegisterFactoryItem(BFS,AlgorythmFactory,"Gráf algoritmusok/Szélességi bejárás")
-
+const QString BFSGraphModel::key_visited = "visited";
+const QString BFSGraphModel::key_edgetype = "edgetype";
 BFS::BFS():GraphAlgorythm( new BFSGraphModel() )
 {
 }
@@ -29,10 +30,10 @@ void BFS::runGraphAlgorythm(Graph<QString,QVariant> ::Node *startNode)
 
     for( size_t i = 0; i < gm->nodesCount();++i){
         Graph<QString,QVariant> ::Node *n =  (*gm)[i];
-        gm->setNodeWeight(n,key_visited,QVariant());
+        gm->setNodeWeight(n,BFSGraphModel::key_visited,QVariant());
         for( size_t j = 0 ; j < n->edgesCount();++j){
             Graph<QString,QVariant> ::Edge *e = n->at(j);
-            gm->setEdgeWeight(e,key_edgetype,1);
+            gm->setEdgeWeight(e,BFSGraphModel::key_edgetype,1);
         }
     }
 
@@ -40,9 +41,9 @@ void BFS::runGraphAlgorythm(Graph<QString,QVariant> ::Node *startNode)
     Graph<QString,QVariant> ::Node *x;
     Graph<QString,QVariant> ::Node *y;
 
-    startNode->value(key_visited,true);
+    startNode->value(BFSGraphModel::key_visited,true);
 
-    gm->setNodeWeight(startNode,key_visited,true);
+    gm->setNodeWeight(startNode,BFSGraphModel::key_visited,true);
 
     q.push(startNode);
 
@@ -58,13 +59,13 @@ void BFS::runGraphAlgorythm(Graph<QString,QVariant> ::Node *startNode)
 
         for( size_t i = 0; i < x->edgesCount();++i){
             y = x->at(i)->endNode();
-            if ( !y->value(key_visited).toBool() ){
-                y->value(key_visited,true);
+            if ( !y->value(BFSGraphModel::key_visited).toBool() ){
+                y->value(BFSGraphModel::key_visited,true);
                 //x->at(i)->value(key_treeedge,true);
 
-                  gm->setNodeWeight(y,key_visited,true);
-                  gm->setEdgeWeight(x->at(i),key_edgetype,2);
-                  gm->setEdgeWeight(x->at(i)->endNode()->findEdge(x),key_edgetype,2);
+                  gm->setNodeWeight(y,BFSGraphModel::key_visited,true);
+                  gm->setEdgeWeight(x->at(i),BFSGraphModel::key_edgetype,2);
+                  gm->setEdgeWeight(x->at(i)->endNode()->findEdge(x),BFSGraphModel::key_edgetype,2);
 
                 q.push(y);
                 ITT("Key visited. Queue enqueu " + y->label().toString()) ;
@@ -87,7 +88,10 @@ void BFS::runGraphAlgorythm(Graph<QString,QVariant> ::Node *startNode)
 }
 
 
-BFSGraphModel::BFSGraphModel(): GraphModel(){}
+BFSGraphModel::BFSGraphModel(): GraphModel(){
+
+
+}
 
 bool BFSGraphModel::insertEdge(const QString &srcLabel, const QString &dstLabel, GraphicsView_Edge *edge){
 
@@ -111,10 +115,10 @@ void BFSGraphModel::setNodeWeight(Graph::Node *n, QString key, QVariant value) {
 
     GraphicsView_Node *gn = VPtr<GraphicsView_Node>::asPtr( n->value("gnode") );
 
-    if ( key == key_visited ){
+    if ( key == BFSGraphModel::key_visited ){
 
         if ( value.toBool() ){
-            gn->setBrush(Qt::darkGreen);
+            gn->setBrush(Qt::black);
             gn->setTextColor(Qt::white);
         } else
         {
@@ -125,26 +129,26 @@ void BFSGraphModel::setNodeWeight(Graph::Node *n, QString key, QVariant value) {
 
 
 }
+bool BFSGraphModel::setEdgeWeight(Graph::Edge *e, QString key, QVariant value) {
 
-void BFSGraphModel::setEdgeWeight(Graph::Edge *e, QString key, QVariant value) {
 
-
-    GraphModel::setEdgeWeight(e,key,value);
+    bool ok = GraphModel::setEdgeWeight(e,key,value);
 
     GraphicsView_Edge *ge = VPtr<GraphicsView_Edge>::asPtr( e->value("gedge") );
 
-    bool ok = false;
+
     int ind = value.toInt(&ok);
 
-    if ( key == key_edgetype ){
+    if ( key == BFSGraphModel::key_edgetype ){
         if( ind == 1 )
-            ge->setColor(Qt::darkGray);
+            ge->setColor(Qt::red);
         else if( ind == 2 )
-            ge->setColor(Qt::green);
+            ge->setColor(Qt::blue);
         else
             ge->setColor(Qt::black);
 
     }
 
+    return ok;
 
 }

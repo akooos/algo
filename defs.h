@@ -1,12 +1,7 @@
 #ifndef DEFS
 #define DEFS
 
-#if (__cplusplus < 201103L)
-//class constant
-#define constant static const
-#else
-#define constant const
-#endif
+
 
 #ifdef QT_CORE_LIB
 
@@ -23,6 +18,10 @@
 #endif
 #endif //QT_CORE_LIB
 
+typedef unsigned int uint;
+typedef unsigned long ulong;
+typedef unsigned char uchar;
+typedef unsigned short ushort;
 
 /* Stroustrup */
 template<class T, class B> struct Derived_from {
@@ -45,5 +44,18 @@ template<class T1, class T2, class T3 = T1> struct Can_multiply {
     Can_multiply() { void(*p)(T1,T2,T3) = constraints; }
 };
 
+static const double Pi = 3.14159265358979323846;
+static const double TwicePi = 2* Pi;
+static const double Golden_Ratio_Conjugate = 0.618033988749895;
+
+#include <math.h>
+static float subf(float a, float b, size_t precision = 2){
+    float d = pow(10,precision);
+    int ia = ceil( a * d );
+    int ib = ceil(b * d);
+    return  (ia-ib) / d;
+}
+#include <limits>
+static const int MAX_INT = std::numeric_limits<int>::max();
 #endif // DEFS
 

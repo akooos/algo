@@ -33,8 +33,8 @@ struct Graph
     public:
       Edge(Node* endNode){
           this->end_node = endNode;
-
       }
+
       std::vector<KeyType> keys() const{
 
           std::vector<KeyType> result;
@@ -169,16 +169,26 @@ struct Graph
 
         Edge * createEdge(Node* endNode){
 
-            ITT("Model:Creating edge ")
+            ITT("Model:Creating edge " << nodelabel.toString() << " -> " << endNode->label().toString())
 
             Edge *edge = new Edge(endNode);
             edges.push_back(edge);
             return edge;
         }
 
+
+
         Node(ValueType label){
             this->nodelabel = label;
         }
+        Node * copyOnlyNode(bool copyweights = false){
+            Node *result = new Node(nodelabel);
+            if ( copyweights )
+                result->weights = weights;
+            return result;
+
+        }
+
         ~Node(){
 
             while( !edges.empty()){
@@ -276,6 +286,8 @@ struct Graph
         ITT( "Added node:" + label.toString())
         return node;
     }
+
+
 /*
     size_t countEdges(ValueType beginNodeLabel,ValueType endNodeLabel){
 
@@ -369,6 +381,12 @@ struct Graph
 
     }
 
+    Node * at(size_t index){
+        typename std::list<Node*>::iterator it = nodes.begin();
+        std::advance(it,index);
+
+        return *it;
+    }
     Node * operator[] (size_t index) {
         typename std::list<Node*>::iterator it = nodes.begin();
         std::advance(it,index);
@@ -382,6 +400,9 @@ struct Graph
     Graph(GraphType gt = Undirected){
         this->gt = gt;
     }
+    GraphType graphType() const{
+        return gt;
+    }
 
     ~Graph(){
         while( !nodes.empty()){
@@ -391,7 +412,38 @@ struct Graph
         }
     }
 
+    Graph* transponation() {
+        Graph *result = new Graph;
+        Node *nn; //new node
+        Node *on; //original node
+        Edge *oe;
+        Node *en; //endnode
+        for ( size_t i = 0 ; i < nodesCount() ;++i){
+            on = at(i);
+            nn = result->findNodeByValue(on->label());
 
+            if ( !nn ){
+                nn = on->copyOnlyNode();
+                result->nodes.push_back(nn);
+            }
+
+            for( size_t j = 0; j < on->edgesCount();++j){
+                oe = on->at(j);
+                en = result->findNodeByValue(oe->endNode()->label());
+
+                if ( !en ){
+                    en = oe->endNode()->copyOnlyNode();
+                    result->nodes.push_back(en);
+                }
+                //itt történik a transzponálás fordítva "kötöm be"
+                en->createEdge(nn);
+
+            }
+        }
+
+        return result;
+
+    }
 
 private:
 
@@ -402,6 +454,8 @@ private:
 
 };
 
+typedef Graph<QString,QVariant> ::Node  GraphNode;
+typedef Graph<QString,QVariant> ::Edge  GraphEdge;
 }
 
 #endif // GRAPH_H

@@ -65,6 +65,7 @@ private:
 public:
     Algorythm * createAlgorythm(TreeItem<QVariant> *orig_ti);
     bool deleteAlgorythm(TreeItem<QVariant> *orig_ti);
+    bool deleteAlgorythm(QWidget *wg);
     void load();
     TreeItemModel * model();
 

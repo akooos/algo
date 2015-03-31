@@ -2,6 +2,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
+#include <QWidget>
+#include <QGraphicsView>
 
 #include "graphscene.h"
 #include "graphicsview_node.h"
@@ -13,7 +15,13 @@ GraphScene::GraphScene(IModelCtrl  *_mintf, QObject * parent ):QGraphicsScene(pa
   addItem(gli);
   gli->setVisible(false);
   gli->setZValue(-1);
+  QPen pen = gli->pen();
+  pen.setStyle(Qt::DashLine);
+  pen.setWidth(2);
+  pen.setColor(Qt::darkGray);
+  gli->setPen(pen);
   gli->setCacheMode(QGraphicsItem::NoCache);
+
 }
 GraphScene::~GraphScene()
 {
@@ -27,6 +35,17 @@ void GraphScene::setMode(GraphScene::GraphMode mode)
         gli->update();
     }
 }
+
+void GraphScene::userQueryWeight(GraphicsView_Edge *edge){
+
+    QGraphicsView *v = views().first();
+    QString str = QInputDialog::getText(dynamic_cast< QWidget * >(v),QString("Él címke"),QString("Érték")) ;
+    if ( !str.isNull()){
+
+        if ( mintf->setEdgeWeight(edge->sourceNode()->label().toString(),edge->destNode()->label().toString(),QString("cimke"),QVariant::fromValue(str)) )
+            edge->setText(str);
+    }
+}
 void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->button() != Qt::LeftButton )
@@ -34,7 +53,7 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
     QPointF p = mouseEvent->scenePos();
 
-    QList<QGraphicsItem*> si = selectedItems();
+    // QList<QGraphicsItem*> si = selectedItems();
 
     switch(mode){
     case InsNode:{
@@ -49,7 +68,7 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
             this->clearSelection();
 
             this->addItem(node);
-            node->setSize(QSizeF(40,40));
+            node->setSize(QSizeF(30,30));
             p.setX(p.x()-20);
             p.setY(p.y()-20);
             node->setPos(p);
@@ -110,15 +129,16 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         }
 
         dstNode = node;
-        GraphicsView_Edge *edge = new GraphicsView_Edge(srcNode,dstNode);
+        GraphicsView_Edge *edge = new GraphicsView_Edge(srcNode,dstNode,mintf->isDirected());
 
         if ( mintf->insertEdge(srcNode->label().toString(),dstNode->label().toString(),edge) ){
             this->clearSelection();
 
             this->addItem(edge);
             edge->adjust();
-        } else{
-            delete edge;
+            gli->setVisible(false);
+        } else{            
+            delete edge;            
         }
 
         srcNode = dstNode;
@@ -171,7 +191,12 @@ void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
         gli->setVisible(true);
         QPointF p = mouseEvent->scenePos();
 
-        gli->setLine(QLineF(srcNode->pos(),p));
+        QPointF srcp = srcNode->pos();
+
+
+        srcp += QPointF(srcNode->size().width()/2,srcNode->size().height()/2);
+
+        gli->setLine(QLineF(srcp,p));
 
     }
     QGraphicsScene::mouseMoveEvent(mouseEvent);
@@ -184,6 +209,7 @@ void GraphScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 void GraphScene::keyReleaseEvent(QKeyEvent *keyEvent)
 {
+
     if ( keyEvent->key() == Qt::Key_Escape)
     {
         setMode(NoAction);

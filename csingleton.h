@@ -10,10 +10,12 @@ class CSingleton
     public:
         inline static T * instance()
         {
+            //return  (inst) ? inst  : inst = new T;
             if ( inst == 0 ){
                 inst = new T;
             }
             return inst;
+
         }
         inline static void destruct()
         {

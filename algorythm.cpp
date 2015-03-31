@@ -1,6 +1,7 @@
 #include "algorythm.h"
 #include "util.h"
 #include <QWidget>
+#include <QDebug>
 
 using namespace Algo;
 
@@ -39,6 +40,44 @@ AlgorythmFactory::AlgorythmFactory(){
 AlgorythmFactory::~AlgorythmFactory(){
     delete mdl;
     delete tree;
+}
+bool AlgorythmFactory::deleteAlgorythm(QWidget *wg)
+{
+    tree->setCurrentItemToBeginning();
+
+
+    while( tree->current () != 0 && tree->current () != tree->root() )
+    {
+        TreeItem<QVariant>* ti = tree->current();
+
+
+
+        if ( ti->dataCount() == 2 ){
+            QVariant vr = ti->data(1);
+            Algo::Algorythm *algo = VPtr<Algorythm>::asPtr(vr);
+
+            if ( algo ){
+
+                if ( algo->widget() == wg ){
+
+                    if ( algo->state() == AlgorythmStates::Running )
+                        return false;
+
+                    algo->deleteLater();
+                    ti->removeAt(1);
+                    return true;
+                }
+            }
+        }
+
+
+        tree->next();
+    }
+
+
+    return false;
+
+
 }
 bool AlgorythmFactory::deleteAlgorythm(TreeItem<QVariant> *orig_ti)
 {

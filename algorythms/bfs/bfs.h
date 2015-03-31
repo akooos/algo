@@ -7,8 +7,7 @@ using namespace Algo;
 using namespace AdjacencyList;
 
 
-constant QString key_visited = "visited";
-constant QString key_edgetype = "edgetype";
+
 
 class BFSGraphModel:public GraphModel{
 
@@ -20,9 +19,10 @@ public:
     virtual bool insertEdge(const QString &srcLabel,const QString &dstLabel, GraphicsView_Edge* edge);
 
     virtual void setNodeWeight(Graph<QString,QVariant>::Node *n , QString key, QVariant value);
-    virtual void setEdgeWeight(Graph<QString,QVariant>::Edge *e, QString key, QVariant value);
+    virtual bool setEdgeWeight(Graph<QString,QVariant>::Edge *e, QString key, QVariant value);
 
-
+    const static QString key_visited ;
+    const static QString key_edgetype;
 
 };
 

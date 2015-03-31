@@ -1,15 +1,10 @@
-
-
 #include <QScrollBar>
-
 
 #include "ui_graph.h"
 #include "graphalgorythm.h"
 #include "util.h"
 #include "graphicsview_node.h"
 #include "graphicsview_edge.h"
-
-
 
 GraphAlgorythm::GraphAlgorythm(GraphModel *gm):Algorythm(),scene(new GraphScene(gm,this)),ui(new Ui::GraphWidget()),gm(gm)
 {
@@ -56,6 +51,10 @@ GraphAlgorythm::GraphAlgorythm(GraphModel *gm):Algorythm(),scene(new GraphScene(
     ui->graphicsView->setScene(scene);
 
     ui->tbAuto->setVisible(false);
+    ui->leEdgeWeight->setVisible(false);
+    ui->label->setVisible(false);
+
+    scene->setSceneRect(0,0,ui->graphicsView->width(),ui->graphicsView->height());
 }
 
 GraphAlgorythm::~GraphAlgorythm()
@@ -71,6 +70,7 @@ void GraphAlgorythm::printLine(const QString &line)
     ui->textBrowser->setHtml( (txt + line).trimmed() );
     QScrollBar *sb = ui->textBrowser->verticalScrollBar();
     sb->setValue(sb->maximum());
+    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 void GraphAlgorythm::onActionTriggered(bool checked)
@@ -152,19 +152,18 @@ void GraphAlgorythm::stop()
     if ( m_state != AlgorythmStates::Running )
         return;
 
-
     setState(AlgorythmStates::Stopped);
 }
 
-
-
-GraphModel::GraphModel(): Graph<QString,QVariant>(){
+GraphModel::GraphModel(GraphType graph_type): Graph<QString,QVariant>(graph_type){
     cntr = 0;
 }
 
 bool GraphModel::insertNode(QString &label, GraphicsView_Node *node){
-    label = QString("%1").arg(cntr);
-    ++cntr;
+
+
+    label = QString::fromStdString(Utils->numberToASCIINumber(cntr));
+    cntr++;
 
     Graph<QString,QVariant>::Node *n = this->addNode(label);
 
@@ -193,10 +192,7 @@ bool GraphModel::insertEdge(const QString &srcLabel, const QString &dstLabel, Gr
         e->value("gedge",vr);
         if (masik_e){
             masik_e->value("gedge",vr);
-        } else{
-            ITT("masik_ELSE")
         }
-
         return true;
     }
     return false;
@@ -212,14 +208,33 @@ void GraphModel::setNodeWeight(Graph::Node *n, QString key, QVariant value) {
     n->value(key,value);
 }
 
-void GraphModel::setEdgeWeight(Graph::Edge *e, QString key, QVariant value) {
+bool GraphModel::setEdgeWeight(Graph::Edge *e, QString key, QVariant value) {
     e->value(key,value);
+    return true;
 }
 
-void GraphModel::setEdgeWeight(Graph::Node *src, Graph::Node *dest, QString key, QVariant value) {
-
+bool GraphModel::setEdgeWeight(Graph::Node *src, Graph::Node *dest, QString key, QVariant value)
+{
     Graph<QString,QVariant>::Edge *e = this->findEdge(src,dest);
     if ( !e )
-        return;
-    setEdgeWeight(e,key,value);
+        return false;
+
+    return setEdgeWeight(e,key,value);
+}
+
+bool GraphModel::setEdgeWeight(const QString &srcLabel, const QString &dstLabel, QString key, QVariant value) {
+
+    Graph<QString,QVariant>::Edge *e = this->findEdge(srcLabel,dstLabel);
+    if ( !e )
+        return false;
+
+    ITT("SetWeight" << key << " = " << value.toString())
+    return setEdgeWeight(e,key,value);
+
+
+}
+
+bool GraphModel::isDirected() const
+{
+    return  this->graphType() == AdjacencyList::Directed;
 }
