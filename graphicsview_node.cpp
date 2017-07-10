@@ -127,14 +127,14 @@ void GraphicsView_Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void GraphicsView_Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsObject::mousePressEvent(event);
-    update();
+    //update();
 
 }
 
 void GraphicsView_Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsObject::mouseReleaseEvent(event);
-    update();
+    //update();
 
 }
 
@@ -254,7 +254,7 @@ const QPen &GraphicsView_Node::pen() const
 
 void GraphicsView_Node::setColor(QColor clr)
 {
-    //clr.setAlpha(180);
+    clr.setAlpha(200);
     setBrush(clr);
     setPen(clr.darker());
 }

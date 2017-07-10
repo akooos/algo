@@ -5,14 +5,15 @@
 
 #include "algorythms/graphalgorythm.h"
 #include <stack>
+#include <queue>
 #include <QVariant>
+
 
 using namespace Algo;
 using namespace AdjacencyList;
 
 
 struct ComponentsSearchGraphModel:public GraphModel{
-
 
     ComponentsSearchGraphModel(): GraphModel(AdjacencyList::Directed){}
     virtual bool insertEdge(const QString &srcLabel, const QString &dstLabel, GraphicsView_Edge *edge);
@@ -28,16 +29,29 @@ class ComponentsSearch: public  GraphAlgorythm, public FactoryItem<ComponentsSea
 {
     Q_OBJECT
 
+
+    struct GraphNodeComperator{
+        bool operator() (GraphNode *lhs, GraphNode* rhs){
+            bool ok = false;
+            return lhs->value("bsz").toInt(&ok) <= rhs->value("bsz").toInt(&ok);
+        }
+    };
+
+    typedef std::priority_queue< GraphNode* , std::vector<GraphNode* >,GraphNodeComperator  > PQ_DFS;
     QList<QGraphicsTextItem*> ti_classes;
 
-
-    bool isNodeVisited(GraphNode *n) const
+    inline bool isNodeIsolated(GraphNode *n) const{
+        return n->value("isolated").toBool() ;
+    }
+    inline bool isNodeVisited(GraphNode *n) const
     {
         return n->value("visited").toBool();
     }
-    void dfs(Graph<QString,QVariant> *g, GraphNode *node, std::stack<QVariant> &traversal);
-    std::stack<QVariant> create_dfs_nodes_label();
+    void dfs(Graph<QString,QVariant> *g, GraphNode *node, PQ_DFS &traversal, int &bsz);
+    PQ_DFS create_dfs_nodes_label();
 
+
+    void addTextItem(const QString &txt, QColor clr, QPointF &tipos);
 protected:
     virtual void runGraphAlgorythm(GraphNode *startNode);
 

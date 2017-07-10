@@ -23,7 +23,7 @@ public:
 };
 
 
-class Dijkstra: public  GraphAlgorythm, public FactoryItem<Dijkstra>
+class Dijkstra: public GraphAlgorythm, public FactoryItem<Dijkstra>
 {
     Q_OBJECT
 

@@ -237,14 +237,9 @@ struct Graph
 
 
         if ( gt == Undirected ){
-
             *masik_e = endNode->createEdge(beginNode);
-
-            ITT("Masik created")
-
+            ITT("Graph undirected. Creating edge from the opposite direction.")
         }
-
-
 
         return beginNode->createEdge(endNode);
 

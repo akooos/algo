@@ -7,7 +7,7 @@
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QAbstractAnimation>
-
+#include <QDebug>
 #include "defs.h"
 #include "csingleton.h"
 class Util: public CSingleton<Util>

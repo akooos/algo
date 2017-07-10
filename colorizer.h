@@ -25,10 +25,14 @@ namespace ColorModels{
 
 class Colorizer
 {
+
+    enum Methods{EqDivision, EqDivisionWithRandomSaturation};
     ColorModels::HSV  clr;
     ushort m_est_colorcnt;
 
-    ushort cntr;
+    Methods genmethod;
+
+    void generateClr();
 
 public:
     Colorizer(ushort estimatedColorCount = 255);
@@ -50,8 +54,17 @@ public:
     void setHSV(const ColorModels::HSV  &value) {
         clr = value;
     }
+
+    void setMethod(Colorizer::Methods method){
+        this->genmethod = method;
+    }
+    Colorizer::Methods method() const{
+        return this->genmethod;
+    }
+
+    ColorModels::HSV nextColor() ;
 #ifdef QT_CORE_LIB
-    QColor nextColor();
+    QColor nextQColor();
 #endif //QT_CORE_LIB
 };
 

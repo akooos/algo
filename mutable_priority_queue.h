@@ -2,6 +2,8 @@
 #define MUTABLE_PRIORITY_QUEUE_H
 
 #include <algorithm>
+#include <functional>
+#include <vector>
 
 template <class T, class Container = std::vector<T>,
           class Compare = std::less<T> >

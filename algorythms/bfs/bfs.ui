@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GraphWidget</class>
- <widget class="QWidget" name="GraphWidget">
+ <class>BFSWidget</class>
+ <widget class="QWidget" name="BFSWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,32 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QToolButton" name="tbSelect">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>30</horstretch>
-         <verstretch>30</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>D</string>
-       </property>
-       <property name="icon">
-        <iconset resource="icons/icons.qrc">
-         <normaloff>:/pointer.png</normaloff>:/pointer.png</iconset>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QToolButton" name="tbAdd">
        <property name="sizePolicy">
@@ -60,8 +37,7 @@
         <string>Csúcs hozzáadás</string>
        </property>
        <property name="icon">
-        <iconset resource="icons/icons.qrc">
-         <normaloff>:/node-add.png</normaloff>:/node-add.png</iconset>
+        <iconset theme="list-add"/>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -89,8 +65,7 @@
         <string>Csúcs elvétel</string>
        </property>
        <property name="icon">
-        <iconset resource="icons/icons.qrc">
-         <normaloff>:/node-delete.png</normaloff>:/node-delete.png</iconset>
+        <iconset theme="list-remove"/>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -109,8 +84,7 @@
         <string>Él hozzáadás</string>
        </property>
        <property name="icon">
-        <iconset resource="icons/icons.qrc">
-         <normaloff>:/edge-add.png</normaloff>:/edge-add.png</iconset>
+        <iconset theme="list-add"/>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -129,11 +103,32 @@
         <string>Él elvétel</string>
        </property>
        <property name="icon">
-        <iconset resource="icons/icons.qrc">
-         <normaloff>:/edge-remove.png</normaloff>:/edge-remove.png</iconset>
+        <iconset theme="list-remove"/>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="tbSelect">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>30</horstretch>
+         <verstretch>30</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>D</string>
+       </property>
+       <property name="icon">
+        <iconset theme="input-mouse"/>
        </property>
       </widget>
      </item>
@@ -149,9 +144,7 @@
         <string>Automatikus generálás</string>
        </property>
        <property name="icon">
-        <iconset theme="go-home">
-         <normaloff/>
-        </iconset>
+        <iconset theme="go-home"/>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -174,97 +167,17 @@
     </layout>
    </item>
    <item>
-    <widget class="QSplitter" name="splitter">
+    <widget class="QGraphicsView" name="graphicsView">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
-       <verstretch>80</verstretch>
+       <verstretch>40</verstretch>
       </sizepolicy>
      </property>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <widget class="QWidget" name="">
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QGraphicsView" name="graphicsView">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>80</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
-         </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::NoContextMenu</enum>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustIgnored</enum>
-         </property>
-         <property name="sceneRect">
-          <rectf>
-           <x>-1000.000000000000000</x>
-           <y>-1000.000000000000000</y>
-           <width>1000.000000000000000</width>
-           <height>1000.000000000000000</height>
-          </rectf>
-         </property>
-         <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-         </property>
-         <property name="transformationAnchor">
-          <enum>QGraphicsView::AnchorViewCenter</enum>
-         </property>
-         <property name="resizeAnchor">
-          <enum>QGraphicsView::AnchorViewCenter</enum>
-         </property>
-         <property name="viewportUpdateMode">
-          <enum>QGraphicsView::FullViewportUpdate</enum>
-         </property>
-         <property name="rubberBandSelectionMode">
-          <enum>Qt::ContainsItemShape</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Él címke</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="leEdgeWeight">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QTextBrowser" name="textBrowser"/>
     </widget>
+   </item>
+   <item>
+    <widget class="QTextBrowser" name="textBrowser"/>
    </item>
   </layout>
   <action name="aAdd">
@@ -272,11 +185,10 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons/icons.qrc">
-     <normaloff>:/node-add.png</normaloff>:/node-add.png</iconset>
+    <iconset theme="list-add"/>
    </property>
    <property name="text">
-    <string>Csúcs hozzáadás</string>
+    <string>Hozzáadás</string>
    </property>
    <property name="toolTip">
     <string>Csúcs hozzáadás</string>
@@ -290,8 +202,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons/icons.qrc">
-     <normaloff>:/node-delete.png</normaloff>:/node-delete.png</iconset>
+    <iconset theme="list-remove"/>
    </property>
    <property name="text">
     <string>Csúcs eltávolítása</string>
@@ -302,8 +213,7 @@
   </action>
   <action name="aNoAction">
    <property name="icon">
-    <iconset resource="icons/icons.qrc">
-     <normaloff>:/pointer.png</normaloff>:/pointer.png</iconset>
+    <iconset theme="input-mouse"/>
    </property>
    <property name="text">
     <string>Nincs művelet</string>
@@ -314,9 +224,7 @@
   </action>
   <action name="aAutoGen">
    <property name="icon">
-    <iconset theme="go-home">
-     <normaloff/>
-    </iconset>
+    <iconset theme="go-home"/>
    </property>
    <property name="text">
     <string>Automatikus generálás</string>
@@ -330,8 +238,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons/icons.qrc">
-     <normaloff>:/edge-add.png</normaloff>:/edge-add.png</iconset>
+    <iconset theme="list-add"/>
    </property>
    <property name="text">
     <string>Él hozzáadás</string>
@@ -342,16 +249,13 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons/icons.qrc">
-     <normaloff>:/edge-remove.png</normaloff>:/edge-remove.png</iconset>
+    <iconset theme="list-remove"/>
    </property>
    <property name="text">
     <string>Él törlése</string>
    </property>
   </action>
  </widget>
- <resources>
-  <include location="icons/icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

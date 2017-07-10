@@ -11,20 +11,20 @@ void GraphicsView_Edge::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 
     QGraphicsObject::mouseReleaseEvent(event);
-    adjust();
+    //adjust();
 }
 
 void GraphicsView_Edge::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
     QGraphicsObject::mouseMoveEvent(event);
-    update();
+    //update();
 }
 
 void GraphicsView_Edge::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsObject::mousePressEvent(event);
-    update();
+    //update();
 }
 
 void GraphicsView_Edge::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -36,7 +36,7 @@ void GraphicsView_Edge::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     }
 
     QGraphicsObject::mouseDoubleClickEvent(event);
-    update();
+    //update();
 }
 
 void GraphicsView_Edge::adjust(bool adjustHandlePoints)
@@ -70,16 +70,23 @@ void GraphicsView_Edge::adjust(bool adjustHandlePoints)
     } else {
         _srcPoint = _dstPoint = line.p1();
     }
-    if ( ah ){
+  //  if ( ah ){
         QVector2D  v = QVector2D(_srcPoint) - QVector2D(_dstPoint);
-        float lambda = srcNode->size().width()/3;
+        float lambda = dstNode->size().width()/3;
         v.normalize();
         v *= lambda;
         QPointF dp = v.toPointF();
         _dstPoint+=dp;
 
-    }
-    if ( adjustHandlePoints ){
+        v *= -1;
+        lambda = srcNode->size().width()/3;
+        v.normalize();
+        v *= lambda;
+        dp = v.toPointF();
+        _srcPoint += dp;
+
+  //  }
+   /* if ( adjustHandlePoints ){
         float dx =  _srcPoint.x()- srcPoint.x() +  _dstPoint.x() - dstPoint.x();
         float dy =  _srcPoint.y() - srcPoint.y() + _dstPoint.y() - dstPoint.y();
         //QVector2D d(_dstPoint-_srcPoint);
@@ -90,32 +97,40 @@ void GraphicsView_Edge::adjust(bool adjustHandlePoints)
         //dx *= hp->taux;
         //dy *= hp->tauy;
 
-
+      //  ITT("Edge adjust")
         //d *= hp->tau;
         //QPointF pf = _srcPoint + d.toPointF();
-        QPointF pf;
-        pf.setX( (1-hp->taux)*_srcPoint.x() + (hp->taux*_dstPoint.x()) );
-        pf.setY( (1-hp->tauy)*_srcPoint.y() + (hp->tauy*_dstPoint.y()) );
+       // QPointF pf;
+       // pf.setX( (1-hp->taux)*_srcPoint.x() + (hp->taux*_dstPoint.x()) );
+       // pf.setY( (1-hp->tauy)*_srcPoint.y() + (hp->tauy*_dstPoint.y()) );
 
-        hp->calc = false;
-        hp->setPos(pf);
+      //  hp->calc = false;
+        //hp->setPos(pf);
 
 //        ITT(hp->tau << +" TAU")
 
         QPointF gti_p = lb->pos();
         gti_p += QPointF(dx,dy);
         lb->setPos(gti_p);
-    }
+    }*/
     srcPoint = _srcPoint;
     dstPoint = _dstPoint;
 
+
+    //lb->setPos( QPointF( srcPoint.x() + ( (( dstPoint.x() - srcPoint.x() )) /2 ) , srcPoint.y() +(( ( dstPoint.y() - srcPoint.y() ) /2) ) )  );
+    hp->setPos( QPointF( srcPoint.x() + (( dstPoint.x() - srcPoint.x() ) /2) , srcPoint.y() +( ( dstPoint.y() - srcPoint.y() ) /2 ) ) );
+
+    //QFontMetrics fm (lb->font());
+    lb->setPos( QPointF( srcPoint.x() + ( (( dstPoint.x() - srcPoint.x() )) /2 ) , srcPoint.y() +(( ( dstPoint.y() - srcPoint.y() ) /2) ) )  );
     pp = QPainterPath();
     pp.moveTo(_srcPoint);
-    //pp.lineTo(_dstPoint);
-    pp.quadTo(hp->pos(),_dstPoint);
+    pp.lineTo(_dstPoint);
 
 
+    //pp.quadTo(hp->pos(),_dstPoint);
 
+
+//    ITT("Edge adjusted" << srcNode->label().toString() << " <-> " << dstNode->label().toString() ) ;
     update();
 
 }
@@ -131,9 +146,7 @@ GraphicsView_Edge::GraphicsView_Edge(GraphicsView_Node *srcNode, GraphicsView_No
     lb = new Label(this);
     ah = drawArrow ? new ArrowHead(this) : 0 ;
 
-    setCacheMode(QGraphicsItem::NoCache);
-
-    setFlag(ItemIsSelectable,true);
+    setFlag(ItemIsSelectable);
 
     setCacheMode(NoCache);
     setZValue(-1);
@@ -141,7 +154,7 @@ GraphicsView_Edge::GraphicsView_Edge(GraphicsView_Node *srcNode, GraphicsView_No
     srcNode->addEdge(this);
     dstNode->addEdge(this);
 
-    hp->calc = true;
+   // hp->calc = true;
     hp->setPos( QPointF( srcPoint.x() + (( dstPoint.x() - srcPoint.x() ) /2) , srcPoint.y() +( ( dstPoint.y() - srcPoint.y() ) /2 ) ) );
 
     //QFontMetrics fm (lb->font());
@@ -221,6 +234,9 @@ QVariant GraphicsView_Edge::itemChange(QGraphicsItem::GraphicsItemChange change,
 
 QPainterPath GraphicsView_Edge::shape() const
 {
+
+
+
     return pp;
 }
 GraphicsView_Edge::HandlePoint::HandlePoint(GraphicsView_Edge *parent):QGraphicsEllipseItem(parent)
@@ -234,37 +250,38 @@ GraphicsView_Edge::HandlePoint::HandlePoint(GraphicsView_Edge *parent):QGraphics
     setCacheMode(QGraphicsItem::NoCache);
     setFlag(ItemSendsScenePositionChanges);
    // tau = 0;
-    calc = true;
+    calc = false;
 }
 
 QVariant GraphicsView_Edge::HandlePoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
-
+/*
     if ( change == QGraphicsItem::ItemPositionHasChanged ) {
         GraphicsView_Edge* e =qgraphicsitem_cast<GraphicsView_Edge*>(parentItem());
-        if ( calc ){
-            taux =subf(pos().x(),e->srcPoint.x()) / subf(e->dstPoint.x(),e->srcPoint.x());
-            tauy =subf(pos().y(),e->srcPoint.y()) / subf(e->dstPoint.y(),e->srcPoint.y());
+      //  if ( calc ){
+
+            //taux =subf(pos().x(),e->srcPoint.x()) / subf(e->dstPoint.x(),e->srcPoint.x());
+            //tauy =subf(pos().y(),e->srcPoint.y()) / subf(e->dstPoint.y(),e->srcPoint.y());
             //QVector2D q = QVector2D( QPointF(pos() - e->srcNode->pos()));
             //QVector2D p = QVector2D(e->dstNode->pos() - e->srcNode->pos());
             //tau = p.length()/q.length();
-          //   ITT(taux << " TAUx")
-             //        ITT(tauy << " TAUy")
-
-        }
-        calc = true;
-        e->adjust(false);
+       //      ITT(taux << " TAUx")
+            //         ITT(tauy << " TAUy")
+         //   ITT("YOOO")
+      //  }
+      //  calc = true;
+       // e->adjust(false);
     }
-
+*/
     return QGraphicsEllipseItem::itemChange(change,value);
 }
 
 void GraphicsView_Edge::HandlePoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-   QGraphicsEllipseItem::mousePressEvent(event);
+
    GraphicsView_Edge* e =qgraphicsitem_cast<GraphicsView_Edge*>(parentItem());
    e->setSelected(true);
-   update();
+  // update(); QGraphicsEllipseItem::mousePressEvent(event);
 }
 GraphicsView_Edge::ArrowHead::ArrowHead(GraphicsView_Edge *parent):QGraphicsPolygonItem(parent)
 {
@@ -274,19 +291,19 @@ GraphicsView_Edge::ArrowHead::ArrowHead(GraphicsView_Edge *parent):QGraphicsPoly
 
 void GraphicsView_Edge::ArrowHead::adjust(GraphicsView_Edge *parent)
 {
-    QLineF helperLine(parent->dstPoint,parent->hp->pos());
-    double angle = ::asin(helperLine.dy() / helperLine.length());
+    //QLineF helperLine(parent->dstPoint,parent->hp->pos());
+    //double angle = ::asin(helperLine.dy() / helperLine.length());
 
-   if (helperLine.dx() >= 0)
-           angle = Pi - angle;
+  // if (helperLine.dx() >= 0)
+    //       angle = Pi - angle;
 
   // angle= 0;
-    /*
+
     QLineF line(parent->srcPoint,parent->dstPoint);
     double angle = ::acos(line.dx() / line.length());
     if (line.dy() >= 0)
         angle = TwicePi - angle;
-*/
+
 
     QPointF destArrowP1 = parent->dstPoint  + QPointF(sin(angle - Pi / 3) * ArrowSize,
                                               cos(angle - Pi / 3) * ArrowSize);
@@ -330,6 +347,6 @@ void GraphicsView_Edge::Label::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *e
     }
 
     QGraphicsTextItem::mouseDoubleClickEvent(event);
-    update();
+   // update();
 }
 

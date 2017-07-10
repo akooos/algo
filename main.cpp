@@ -4,8 +4,12 @@
 #include "mutable_priority_queue.h"
 
 #include <iostream>
+#include <set>
 
 #include "colorizer.h"
+#include <typeinfo>
+
+
 
 int main(int argc, char *argv[])
 {
@@ -16,4 +20,6 @@ int main(int argc, char *argv[])
     int rc = a.exec();
     Algos->deleteRegs();
     return rc;
+
+      return 0;
 }

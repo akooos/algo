@@ -114,6 +114,8 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_actionRun_triggered()
 {
+
+    qDebug() << __LINE__ << " " << QObject::sender()->metaObject()->className() ;
     QModelIndexList sells = ui->treeView->selectionModel()->selectedIndexes();
     if ( !sells.isEmpty() )
     {

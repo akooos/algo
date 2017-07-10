@@ -1,6 +1,6 @@
 #include <QScrollBar>
 
-#include "ui_graph.h"
+
 #include "graphalgorythm.h"
 #include "util.h"
 #include "graphicsview_node.h"
@@ -42,6 +42,14 @@ GraphAlgorythm::GraphAlgorythm(GraphModel *gm):Algorythm(),scene(new GraphScene(
 
     Q_ASSERT(check);
 
+    check = QObject::connect(scene,SIGNAL(selectionChanged()),this,SLOT(onSceneSelectionChanged()));
+
+    Q_ASSERT(check);
+
+    check = QObject::connect(ui->leEdgeWeight,SIGNAL(textChanged(QString)),this,SLOT(onTextChanged(QString)));
+
+    Q_ASSERT(check);
+
     Q_UNUSED(check);
 
     ui->textBrowser->clear();
@@ -50,11 +58,11 @@ GraphAlgorythm::GraphAlgorythm(GraphModel *gm):Algorythm(),scene(new GraphScene(
 
     ui->graphicsView->setScene(scene);
 
-    ui->tbAuto->setVisible(false);
-    ui->leEdgeWeight->setVisible(false);
-    ui->label->setVisible(false);
+     cur_e = 0;
+     ui->tbAuto->setEnabled(cur_e);
+     ui->leEdgeWeight->setEnabled(cur_e);
+     ui->label->setEnabled(cur_e);
 
-    scene->setSceneRect(0,0,ui->graphicsView->width(),ui->graphicsView->height());
 }
 
 GraphAlgorythm::~GraphAlgorythm()
@@ -114,6 +122,43 @@ void GraphAlgorythm::onActionTriggered(bool checked)
      ui->aAddEdge->setChecked(false);
      ui->aRemoveEdge->setChecked(false);
      scene->setMode(GraphScene::NoAction);
+}
+
+void GraphAlgorythm::onSceneSelectionChanged()
+{
+    GraphicsView_Edge *edge = 0;
+    cur_e = 0;
+    ui->leEdgeWeight->setText( "");
+    QList<QGraphicsItem*> ls_gi = scene->selectedItems();
+
+    foreach(QGraphicsItem *gi, ls_gi){
+        edge = qgraphicsitem_cast<GraphicsView_Edge*>(gi);
+
+        if ( edge )
+            break;
+
+        edge = 0;
+    }
+
+    if ( edge ){
+        cur_e = gm->findEdge(edge->sourceNode()->label(),edge->destNode()->label());
+        if ( cur_e ){
+            ui->leEdgeWeight->setText( cur_e->value("cimke").toString() );
+            ui->leEdgeWeight->setFocus();
+
+        }
+    }
+
+    ui->tbAuto->setVisible(false);
+    ui->leEdgeWeight->setEnabled(cur_e);
+    ui->label->setEnabled(cur_e);
+}
+
+void GraphAlgorythm::onTextChanged(const QString &text)
+{
+    if( cur_e){
+        gm->setEdgeWeight(cur_e,"cimke",text);
+    }
 }
 
 void GraphAlgorythm::start()
@@ -210,6 +255,12 @@ void GraphModel::setNodeWeight(Graph::Node *n, QString key, QVariant value) {
 
 bool GraphModel::setEdgeWeight(Graph::Edge *e, QString key, QVariant value) {
     e->value(key,value);
+
+    GraphicsView_Edge *ge = VPtr<GraphicsView_Edge>::asPtr( e->value("gedge") );
+
+
+    if ( ge && key == "cimke" )
+        ge->setText(value.toString());
     return true;
 }
 

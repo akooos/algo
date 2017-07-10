@@ -6,7 +6,7 @@
 #include "graph.h"
 
 #include "graphscene.h"
-
+#include "ui_graph.h"
 
 class GraphicsScene;
 
@@ -42,7 +42,7 @@ class GraphAlgorythm: public Algo::Algorythm
 {
      Q_OBJECT
 
-
+    GraphEdge *cur_e ;
 protected:
     Ui::GraphWidget *ui;
     GraphModel *  gm;
@@ -56,7 +56,8 @@ public:
 
 private slots:
     void onActionTriggered(bool checked);
-
+    void onSceneSelectionChanged();
+    void onTextChanged(const QString & text);
 public slots:
 
     virtual void start();

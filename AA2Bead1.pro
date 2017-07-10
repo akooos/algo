@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     algorythms/graphalgorythm.cpp \
     mutable_priority_queue.cpp \
     algorythms/componentssearch/componentssearch.cpp \
-    colorizer.cpp
+    colorizer.cpp \
+    algorythms/my/my.cpp
 
 HEADERS  += mainwindow.h \
     csingleton.h \
@@ -54,7 +55,8 @@ HEADERS  += mainwindow.h \
     algorythms/graphalgorythm.h \
     mutable_priority_queue.h \
     algorythms/componentssearch/componentssearch.h \
-    colorizer.h
+    colorizer.h \
+    algorythms/my/my.h
 
 FORMS    += mainwindow.ui \
     algorythms/bucket_sorts/bucketsort.ui \
